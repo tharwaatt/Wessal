@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Wessal - AI IDE Bridge",
+  "version": "7.0",
+  "description": "Native Clipboard Bridge: Transfer code from AI to your local IDE in one click.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "*://chat.openai.com/*",
+    "*://chatgpt.com/*",
+    "*://claude.ai/*",
+    "*://gemini.google.com/*",
+    "*://aistudio.google.com/*",
+    "*://*.kimi.com/*",
+    "*://chat.z.ai/*",
+    "*://chat.deepseek.com/*",
+    "*://chat.qwen.ai/*",
+    "*://chat.qwenlm.ai/*",
+    "*://tongyi.aliyun.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+          "*://chat.openai.com/*",
+          "*://chatgpt.com/*",
+          "*://claude.ai/*",
+          "*://gemini.google.com/*",
+          "*://aistudio.google.com/*",
+          "*://*.kimi.com/*",
+          "*://chat.z.ai/*",
+          "*://chat.deepseek.com/*",
+          "*://chat.qwen.ai/*",
+          "*://chat.qwenlm.ai/*",
+          "*://tongyi.aliyun.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Wessal Settings"
+  }
+}

@@ -1,0 +1,66 @@
+[package]
+name        = "wessal"
+version     = "0.1.0"
+edition     = "2021"
+description = "Automation bridge between Web LLM interfaces and local dev environments"
+
+[[bin]]
+name = "wessal"
+path = "src/main.rs"
+
+[dependencies]
+# ── Async runtime ──────────────────────────────────────────────────────────────
+tokio        = { version = "1",    features = ["full"] }
+futures-util = { version = "0.3", features = ["sink"] }
+
+# ── Browser automation (CDP) ───────────────────────────────────────────────────
+
+# ── WebSocket server (UserScript bridge) ──────────────────────────────────────
+tokio-tungstenite = { version = "0.21", features = ["native-tls"] }
+
+# ── Cryptographic hashing ─────────────────────────────────────────────────────
+sha2 = "0.10"
+hex  = "0.4"
+
+# ── Diff / 3-way merge ────────────────────────────────────────────────────────
+similar = { version = "2.4", features = ["text", "unicode"] }
+diffy   = "0.3"
+
+# ── Serialisation ─────────────────────────────────────────────────────────────
+serde      = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# ── Error handling ─────────────────────────────────────────────────────────────
+# thiserror generates Display + std::error::Error impls via derive macro.
+# The `#[error(...)]` / `#[from]` attributes in error.rs require this crate.
+thiserror = "1"
+anyhow    = "1"
+
+# ── Filesystem traversal ──────────────────────────────────────────────────────
+# `ignore` honours .gitignore automatically (same engine as ripgrep).
+ignore  = "0.4"
+walkdir = "2"
+
+# ── Atomic file writes ────────────────────────────────────────────────────────
+tempfile = "3"
+
+# ── TUI ───────────────────────────────────────────────────────────────────────
+ratatui   = { version = "0.28", features = ["crossterm"] }
+crossterm = { version = "0.28", features = ["event-stream"] }
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+# `env-filter` feature is REQUIRED for EnvFilter and .with_env_filter().
+tracing            = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+chrono = { version = "0.4", features = ["serde"] }
+
+# ── Linux Landlock sandbox ────────────────────────────────────────────────────
+[target.'cfg(target_os = "linux")'.dependencies]
+landlock = "0.3"
+
+[profile.release]
+opt-level     = 3
+lto           = true
+codegen-units = 1

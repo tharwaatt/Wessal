@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      width: 260px;
+      background: #0d0d1a;
+      color: #d0d4e8;
+    }
+    .header {
+      background: #13132a;
+      padding: 14px 16px;
+      border-bottom: 1px solid #1e1e3a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .title { font-size: 15px; font-weight: 600; color: #4a9eff; }
+    .version { font-size: 11px; color: #7b83a0; margin-left: auto; }
+    .content { padding: 20px 16px; }
+    .hint {
+      font-size: 12px;
+      color: #9ba3bf;
+      line-height: 1.6;
+    }
+    .hint strong { color: #4a9eff; font-weight: 600; }
+    .step { margin-bottom: 6px; }
+    .step-num {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #1e1e3a;
+      color: #4a9eff;
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 18px;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span>⚡</span>
+    <span class="title">Wessal</span>
+    <span class="version">v7.0</span>
+  </div>
+
+  <div class="content">
+    <div class="hint">
+      <div class="step"><span class="step-num">1</span>Click <strong>Copy Message</strong> on the AI response</div>
+      <div class="step"><span class="step-num">2</span>Click the <strong>⚡</strong> button in the page</div>
+      <div class="step"><span class="step-num">3</span>Send the pasted result back to the AI</div>
+    </div>
+  </div>
+
+</body>
+</html>
