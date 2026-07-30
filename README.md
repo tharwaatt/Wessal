@@ -2,23 +2,22 @@
 
 Wessal is a local-first bridge daemon that connects web-based LLM interfaces (such as Claude, Gemini, and ChatGPT) to your local filesystem. It operates via a lightweight browser extension communicating with a local Rust daemon over WebSockets.
 
-The project is designed with a strict human-in-the-loop model: file read/write actions are explicitly initiated by the user.
+> The project is designed with a strict human-in-the-loop model: file read/write actions are explicitly initiated by the user.
+
 ---
 
 ## Architecture Overview
 
-
 ```
-
 ┌─────────────────────────┐          WebSocket           ┌─────────────────────────┐
 │ Browser Extension       │ ───────────────────────────> │ Rust Daemon (wessal)    │
 │ (DOM Collector)         │ <─────────────────────────── │ (Parser & Executor)     │
 └─────────────────────────┘      paste / submit          └────────────┬────────────┘
-│
-▼
-┌─────────────────────────┐
-│ Local Filesystem & TUI  │
-└─────────────────────────┘
+                                                                      │
+                                                                      ▼
+                                                         ┌─────────────────────────┐
+                                                         │ Local Filesystem & TUI  │
+                                                         └─────────────────────────┘
 
 ```
 
@@ -34,7 +33,7 @@ The project is designed with a strict human-in-the-loop model: file read/write a
 Wessal recognizes structured tags emitted by the LLM in plain text or code blocks:
 
 | Action Tag Syntax | Description |
-| :--- | :--- |
+| --- | --- |
 | `[WESSAL:init]` | Scans project structure and returns initial metadata. |
 | `[WESSAL:read:path/to/file]` | Reads the full content of a file. |
 | `[WESSAL:read:path/to/file:start:count]` | Reads a specific line range from a file. |
@@ -45,12 +44,12 @@ Wessal recognizes structured tags emitted by the LLM in plain text or code block
 
 ---
 
-## Security and Data Integrity
+## Data Integrity and Safety
 
-- **Atomic Writes:** File updates use temporary files and atomic renames to prevent partial writes or file corruption on failure.
-- **Three-Way Merge:** Uses `diffy` to merge LLM changes with local modifications if a file was edited concurrently.
-- **Path Validation:** Restricts operations to the target project directory, blocking path traversal (`../`) or absolute paths outside the project root.
-- **Memory Bounded:** Implements explicit limits on file size reads and total content payloads to avoid high memory consumption.
+* **Atomic Writes:** File updates use temporary files and atomic renames to prevent partial writes or file corruption on failure.
+* **Three-Way Merge:** Uses `diffy` to merge LLM changes with local modifications if a file was edited concurrently.
+* **Path Validation:** Restricts operations to the target project directory, blocking path traversal (`../`) or absolute paths outside the project root.
+* **Memory Bounded:** Implements explicit limits on file size reads and total content payloads to avoid high memory consumption.
 
 ---
 
@@ -61,8 +60,8 @@ Wessal recognizes structured tags emitted by the LLM in plain text or code block
 Requires Rust (cargo toolchain 1.75+).
 
 ```bash
-git clone [https://github.com/your-username/wessal.git](https://github.com/your-username/wessal.git)
-cd wessal/wessal
+git clone https://github.com/your-username/wessal.git
+cd wessal
 cargo install --path .
 
 ```
@@ -88,15 +87,32 @@ wessal .
 
 ---
 
-## Roadmap (v8.0)
+## Active Development & Upcoming Features
 
-Planned architectural updates for upcoming releases:
+The following architectural enhancements and subsystems are currently under design and active development:
 
-* **Global State Isolation:** Migrating global configuration and sessions out of project roots into native user data directories (`dirs` crate).
-* **SQLite Persistence (`state.db`):** Replacing JSON session logs with an atomic SQLite database for tracking history, audits, and rollback metadata.
-* **Derived Indexing (`index.db`):** Rebuildable SQLite cache for project hashes, structural outlines, and fast AST search.
-* **Rollback Mechanism (`[WESSAL:undo]`):** Automated local file backups prior to write actions, allowing single-command rollbacks.
-* **Project Guidance (`.wessal.md`):** Automated injection of project-specific context and style rules during initialization.
+### 1. Context Optimization & System Instructions
+
+* **Project Guidance (`.wessal.md`):** Automated reading and injection of project-specific rules, style guides, and architecture instructions into the LLM system prompt upon `[WESSAL:init]`.
+* **Refined Context Payloads:** Smarter initial payload construction prioritizing structural outlines and AST metadata over raw file dumps to reduce token overhead.
+
+### 2. Global Memory & Data Persistence
+
+* **Global Home Directory (`~/.wessal`):** Isolation of configuration, session logs, and databases from project workspaces into platform-native directories using the `dirs` crate.
+* **Dual SQLite Architecture:**
+* `state.db`: Durable, atomic database for tracking session history, transaction audits, and configuration state.
+* `index.db`: Rebuildable derived cache for file hashes, symbol indexes, and structural outlines.
+
+
+
+### 3. File Safety & Session Memory
+
+* **Automated Pre-Write Backups:** Snapshots captured before executing any `[WESSAL:write]` action, stored as patch files linked to session metadata.
+* **Rollback System (`[WESSAL:undo]`):** Single-command session or step rollbacks to safely revert unwanted LLM file modifications.
+
+### 4. Real-Time Workspace Synchronization
+
+* **Incremental File Watching:** Event-driven updates using the `notify` file-system watcher to maintain an up-to-date index without manual disk re-scans.
 
 ---
 
